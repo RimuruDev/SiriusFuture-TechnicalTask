@@ -51,7 +51,7 @@ namespace RimuruDev.SiriusFuture
                 string controlCharacter = "\r\n";
                 string pattern = @"\b[a-z]+\b";
 
-                result = string.Join(controlCharacter, Regex.Matches(File.ReadAllText(path), pattern, RegexOptions.IgnoreCase)
+                result = string.Join(controlCharacter, Regex.Matches(File.ReadAllText(pathOut), pattern, RegexOptions.IgnoreCase)
                     .Select(x => x.Value)
                     .Where(x => x.Length > maximumWordLength)
                     .GroupBy(x => x)
