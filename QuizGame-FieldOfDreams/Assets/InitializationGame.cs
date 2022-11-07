@@ -1,4 +1,8 @@
 using System;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -65,9 +69,17 @@ namespace RimuruDev.SiriusFuture
             dataContainer.GetHeaderText.CurrentAttemptsText.text = $"Number of attempts: {dataContainer.GetHeaderValue.NumberOfAttempts}";
         }
 
+        private bool isWin;
         public void Initializator()
         {
+            if (isWin == true)
+                return;
+
             InitWord();
+
+            if (isWin == true)
+                return;
+
             InitialUserInterface();
             InitialWordToUnravel();
             CacheAllKeyboardButtons();
@@ -83,15 +95,28 @@ namespace RimuruDev.SiriusFuture
                 filteringHandler.FilteringByUniqueWords();
 
                 string textData = filteringHandler.GetFilteringByUniqueWords();
-                array = textData.Split(new char[] { '\n' });
 
-                Debug.Log("Init ward = false");
+                if (textData.Length <= 0)
+                {
+                    Debug.Log("Win Game!");
+                    isWin = true;
+                    return;
+                }
+
+                array = textData.Split(new char[] { '\n' });
             }
             else
             {
                 string textData = filteringHandler.GetFilteringByUniqueWords();
+
+                if (textData.Length <= 0)
+                {
+                    Debug.Log("Win Game!");
+                    isWin = true;
+                    return;
+                }
+
                 array = textData.Split(new char[] { '\n' });
-                Debug.Log("Init ward = true");
             }
 
             SetCurrentWord();
@@ -106,10 +131,32 @@ namespace RimuruDev.SiriusFuture
 
             int GetRandomArrayElementIndex() => new System.Random().Next(0, array.Length);
         }
-
+        private readonly string pathOut = @$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt";
         private void NextSession()
         {
             PlayerPrefs.SetInt("Score", dataContainer.GetHeaderValue.NumberOfScores);
+
+            // Removed old element
+            {
+                string word = GetCurrenWord;
+
+                var arrayCopy = filteringHandler.Remove_(ref array, word);
+
+                string controlCharacter = "\r\n";
+                string pattern = @"\b[a-z]+\b";
+
+                string resultStr = string.Join(controlCharacter, arrayCopy);
+
+                File.WriteAllText(pathOut, string.Join(controlCharacter, Regex.Matches(resultStr, pattern, RegexOptions.IgnoreCase)
+                     .Select(x => x.Value)
+                     .Where(x => x.Length > 4)
+                     .GroupBy(x => x)
+                     .Select(x => x.Key.ToLower())
+                     .OrderBy(x => x)
+                     .Distinct(StringComparer.CurrentCultureIgnoreCase)));
+
+                // File.WriteAllText(@$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt", array);
+            }
 
             NormalButtons();
             InitWord();
