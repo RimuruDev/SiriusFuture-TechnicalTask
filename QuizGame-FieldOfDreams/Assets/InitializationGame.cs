@@ -1,14 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Networking.UnityWebRequest;
 
 namespace RimuruDev.SiriusFuture
 {
@@ -20,27 +12,17 @@ namespace RimuruDev.SiriusFuture
 
         [SerializeField] private string currentWord;
         public string GetCurrenWord => currentWord;
-
         [SerializeField] private char[] currentWordChar;
         public char[] GetCurrentWordChar => currentWordChar;
-
         [SerializeField, TextArea(), Space(5)] private string[] array;
-        [SerializeField] private Button[] allKeyboardButtons;// = new Button[26];
-
-        // Button GUI
+        [SerializeField] private Button[] allKeyboardButtons;
         private Color normalColor = new Color(255, 255, 255, 255);
         private Color blackColor = new Color(0, 0, 0, 255);
         private Color invisibleColor = new Color(74, 70, 69, 0);
-
-        // Init test value
         public int numattempt = 10;
         public int numScore = 0;
         private int wordHit = 0;
-
-        [SerializeField] private bool isInitTextFile = false;
-
         private TextDataFilteringHandler filteringHandler = new TextDataFilteringHandler();
-
         public int GetWordLenthNormolized => currentWordChar.Length - 1;
 
         private void Awake()
@@ -91,50 +73,13 @@ namespace RimuruDev.SiriusFuture
             CacheAllKeyboardButtons();
             NormalButtons();
         }
-        private readonly string path = @$"{Application.streamingAssetsPath}/OriginalTextOfAlicesBook.txt";
-        private readonly string pathOut = @$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt";
+
         private void InitWord()
         {
-            // Filtred book data
-            {
-                //    if (isInitTextFile == false)
-                // {
-
-                if (filteringHandler == null) filteringHandler = new TextDataFilteringHandler();
-
-                filteringHandler.FilteringByUniqueWords();
-
-
-
-                string textData = filteringHandler.GetFilteringByUniqueWords();
-                //if (isInitTextFile == false)
-                //  {
-                // Get filtrea string data
-
-                // Get current char[] answer word
-                array = textData.Split(new char[] { '\n' });
-
-                //   }
-
-            }
-
-            //  }
-            /*
-            else
-            {
-                string controlCharacter = "\r\n";
-                string pattern = @"\b[a-z]+\b";
-
-                var result = string.Join(controlCharacter, Regex.Matches(File.ReadAllText(@$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt"), pattern, RegexOptions.IgnoreCase)
-                     .Select(x => x.Value)
-                     .Where(x => x.Length > 4)
-                     .GroupBy(x => x)
-                     .Select(x => x.Key.ToLower())
-                     .OrderBy(x => x)
-                     .Distinct(StringComparer.CurrentCultureIgnoreCase));
-
-                array = result.Split(new char[] { '\n' });
-            }*/
+            if (filteringHandler == null) filteringHandler = new TextDataFilteringHandler();
+            filteringHandler.FilteringByUniqueWords();
+            string textData = filteringHandler.GetFilteringByUniqueWords();
+            array = textData.Split(new char[] { '\n' });
 
             SetCurrentWord();
 
@@ -142,57 +87,27 @@ namespace RimuruDev.SiriusFuture
             {
                 currentWord = array[GetRandomArrayElementIndex()];
                 currentWordChar = currentWord.ToCharArray();
-                Debug.Log($"currentWordChar = {currentWordChar.Length - 1}");
             }
 
             int GetRandomArrayElementIndex() => new System.Random().Next(0, array.Length);
-
-            isInitTextFile = true;
         }
 
         private void NextSession()
         {
             PlayerPrefs.SetInt("Score", dataContainer.GetHeaderValue.NumberOfScores);
+
             NormalButtons();
             InitWord();
             InitialWordToUnravel();
-            EnableEmptyElement();
-            void EnableEmptyElement()
-            {
-                //  var currentWord = wordDataHandler.GetCurrentWordChar;
-                //  var currentWordLengthNormalize = currentWord.Length - 1;
-                //   var allElementsLength = dataContainer.GetElementContainer.Element.Length;
-
-                //  Debug.Log($"Word length: {GetWordLenthNormolized}");
-                // Debug.Log($"Word length: {currentWordLengthNormalize}");
-                //   Debug.Log($"All element length: {allElementsLength}");
-                // Temp trash solution
-
-                for (int i = GetWordLenthNormolized; i < dataContainer.GetElementContainer.Element.Length; i++)
-                {
-                    var element = dataContainer.GetElementContainer.Element[i];
-                    element.GetComponent<Image>().color = new Color(74, 70, 69, 0);
-                    //     element.GetChild(0).gameObject.SetActive(false);
-                }
-            }
-            //Initializator();
-            // NormalButtons();
-            //  UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-            // PlayerPrefs.SetInt("Attempt", dataContainer.GetHeaderValue.NumberOfAttempts);
         }
 
         private void InitialWordToUnravel()
         {
-            Debug.Log($"currentWordChar InitialWordToUnravel = {currentWordChar.Length - 1}");
-            Debug.Log($"get length  InitialWordToUnravel= {GetWordLenthNormolized}");
-
             int allElementsLength = dataContainer.GetElementContainer.Element.Length;
 
             ClosedAllWordElement();
             OpenWordElements();
             EnableEmptyElement();
-
-
 
             void ClosedAllWordElement()
             {
@@ -202,20 +117,10 @@ namespace RimuruDev.SiriusFuture
 
             void EnableEmptyElement()
             {
-                //  var currentWord = wordDataHandler.GetCurrentWordChar;
-                //  var currentWordLengthNormalize = currentWord.Length - 1;
-                //   var allElementsLength = dataContainer.GetElementContainer.Element.Length;
-
-                //  Debug.Log($"Word length: {GetWordLenthNormolized}");
-                // Debug.Log($"Word length: {currentWordLengthNormalize}");
-                //   Debug.Log($"All element length: {allElementsLength}");
-                // Temp trash solution
-
                 for (int i = GetWordLenthNormolized; i < allElementsLength; i++)
                 {
                     var element = dataContainer.GetElementContainer.Element[i];
                     element.GetComponent<Image>().color = new Color(74, 70, 69, 0);
-                    //     element.GetChild(0).gameObject.SetActive(false);
                 }
             }
 
@@ -226,7 +131,6 @@ namespace RimuruDev.SiriusFuture
                     dataContainer.GetElementContainer.Element[i].GetComponent<Image>().color = blackColor;
                     dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject
                         .GetComponent<TMPro.TMP_Text>().text = GetCurrentWordChar[i].ToString().ToUpper();
-                    Debug.Log(GetCurrentWordChar[i]);
                 }
             }
         }
@@ -287,11 +191,6 @@ namespace RimuruDev.SiriusFuture
             {
                 allKeyboardButtons[i] = dataContainer.GetUserInterfaceData.HeaderUserInterfaceKeyboard[i]
                     .GetComponent<Button>();
-
-                // вынести в отдельный метод и там спавристь все кнопки и обработать.
-                //allKeyboardButtons[i].GetComponent<Image>().color = normalColor;
-                //allKeyboardButtons[i].interactable = true;
-                //allKeyboardButtons[i].transform.GetChild(0).gameObject.SetActive(true);
             }
 
             for (int i = 0; i < middleKeywordLength; i++)
@@ -321,7 +220,6 @@ namespace RimuruDev.SiriusFuture
             void OnClick(Button butoon)
             {
                 var buttonName = butoon.name;
-                //var currentWord = wordDataHandler.GetCurrentWordChar;
                 string currenAnswerWord = string.Empty;
                 bool isAnswerWord = default;
 
@@ -338,13 +236,9 @@ namespace RimuruDev.SiriusFuture
                 }
 
                 if (isAnswerWord)
-                {
                     OpenAnswerWords(currenAnswerWord, butoon);
-                }
                 else
                     DisableButton(butoon);
-
-                //   EventHandler.Instance.OnInitUpdateUI?.Invoke();
             }
         }
 
@@ -358,7 +252,6 @@ namespace RimuruDev.SiriusFuture
                 {
                     dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject.SetActive(true);
                     dataContainer.GetHeaderValue.NumberOfScores++;
-                    Debug.Log("NumberOfScores ++");
                     button.interactable = false;
                     CheckWin();
                 }
@@ -367,16 +260,11 @@ namespace RimuruDev.SiriusFuture
             void CheckWin()
             {
                 wordHit += 1;
-                //var currentWord = wordDataHandler.GetCurrentWordChar;
-                Debug.Log("wordHit = " + wordHit);
+
                 if (GetWordLenthNormolized == wordHit)
                 {
                     wordHit = 0;
-                    Debug.Log("[============== Popup win ==============]");
-                    Debug.Log($"Filaai!!!  NumberOfAttempts == {dataContainer.GetHeaderValue.NumberOfScores} + {dataContainer.GetHeaderValue.NumberOfAttempts}");
                     dataContainer.GetHeaderValue.NumberOfScores += dataContainer.GetHeaderValue.NumberOfAttempts;
-                    //UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-
                     NextSession();
                 }
 
@@ -386,19 +274,13 @@ namespace RimuruDev.SiriusFuture
         private void DisableButton(Button butoon)
         {
             dataContainer.GetHeaderValue.NumberOfAttempts -= 1;
-            Debug.Log("NumberOfAttempts --");
 
             butoon.interactable = false;
             butoon.gameObject.GetComponent<Image>().color = new Color(74, 70, 69, 0);
             butoon.transform.GetChild(0).gameObject.SetActive(false);
-            // butoon.gameObject.SetActive(false);
 
             if (dataContainer.GetHeaderValue.NumberOfAttempts == 0)
-            {
-                Debug.Log("[============== Popup failure ==============]");
-                PlayerPrefs.SetInt("Score", 0);
                 UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-            }
         }
 
         private void SetinitialAttemptValue()
