@@ -114,30 +114,33 @@ namespace RimuruDev.SiriusFuture
         {
             get
             {
+                /*
                 if (currentAttemptsText == null)
                 {
                     Debug.LogError("CurrentAttemptsText null reference");
                     return default;
                 }
+*/
 
                 return currentAttemptsText;
             }
             set
             {
+                /*
                 if (currentAttemptsText != null)
                 {
                     Debug.LogError("CurrentAttemptsText is not null reference! Please use unity editor for set ref");
                     return;
                 }
-
+                */
                 currentAttemptsText = value;
             }
         }
 
         public TMP_Text CurrentScoreText
         {
-            get
-            {
+            get => currentScoreText;
+            /*{/
                 if (currentScoreText == null)
                 {
                     Debug.LogError("CurrentScoreText null reference");
@@ -145,14 +148,16 @@ namespace RimuruDev.SiriusFuture
                 }
 
                 return currentAttemptsText;
-            }
+                
+                }  */
             set
             {
+                /*
                 if (currentScoreText != null)
                 {
                     Debug.LogError("CurrentScoreText is not null reference! Please use unity editor for set ref");
                     return;
-                }
+                }*/
 
                 currentScoreText = value;
             }
@@ -173,7 +178,7 @@ namespace RimuruDev.SiriusFuture
             set
             {
                 numberOfAttempts = Mathf.Clamp(value, 0, ushort.MaxValue);
-                uiHandler.OnAttemptsText?.Invoke();
+                //uiHandler.OnAttemptsText?.Invoke();
             }
         }
 
@@ -183,7 +188,7 @@ namespace RimuruDev.SiriusFuture
             set
             {
                 numberOfScores = Mathf.Clamp(value, 0, ushort.MaxValue);
-                uiHandler.OnUpdateScoreText?.Invoke();
+                //uiHandler.OnUpdateScoreText?.Invoke();
             }
         }
 

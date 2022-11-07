@@ -28,7 +28,7 @@ namespace RimuruDev.SiriusFuture
             InitialWordToUnravel();
             InitialUserInterface();
 
-            OnInitializationEnd.Invoke();
+            OnInitializationEnd?.Invoke();
         }
 
         private void OnEnable()
@@ -48,7 +48,11 @@ namespace RimuruDev.SiriusFuture
 
             filteringHandler.FilteringByUniqueWords();
 
-            OnDataPreparationEnd.Invoke(filteringHandler.GetFilteringByUniqueWords());
+            Debug.Log($"DataPreparation: => {filteringHandler.GetFilteringByUniqueWords()}");
+
+            var str = filteringHandler.GetFilteringByUniqueWords();
+
+            OnDataPreparationEnd?.Invoke(str);
         }
 
         private void InitialUserInterface()
@@ -109,6 +113,7 @@ namespace RimuruDev.SiriusFuture
                 // Debug.Log($"Word length: {currentWordLengthNormalize}");
                 Debug.Log($"All element length: {allElementsLength}");
                 // Temp trash solution
+
                 for (int i = currentWordLengthNormalize; i < allElementsLength; i++)
                 {
                     var element = dataContainer.GetElementContainer.Element[i];
@@ -116,7 +121,7 @@ namespace RimuruDev.SiriusFuture
                     element.GetChild(0).gameObject.SetActive(false);
                 }
 
-               
+
             }
 
             void OpenWordElements()

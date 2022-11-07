@@ -35,7 +35,10 @@ namespace RimuruDev.SiriusFuture
 
         private void InitializationWordDataContainer(string allFilteredData)
         {
+            Debug.Log("InitializationWordDataContainer");
             array = allFilteredData.Split(new char[] { '\n' });
+
+            Debug.Log($"Array = {array}");
 
             SetCurrentWord();
         }

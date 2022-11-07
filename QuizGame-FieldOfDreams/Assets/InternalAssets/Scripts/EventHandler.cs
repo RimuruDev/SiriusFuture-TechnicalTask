@@ -8,7 +8,6 @@ namespace RimuruDev.SiriusFuture
 {
     public sealed class EventHandler : MonoBehaviour
     {
-        public static EventHandler Instance;
         public Action OnAnsword;
         public Action OnInitUpdateUI;
         [SerializeField, HideInInspector] private GameDataContainer dataContainer;
@@ -84,7 +83,7 @@ namespace RimuruDev.SiriusFuture
 
                 localButton.onClick.AddListener(() => OnClick(localButton));
             }
-            EventHandler.Instance.OnInitUpdateUI?.Invoke();
+            OnInitUpdateUI?.Invoke();
             // OnInitUpdateUI?.Invoke();
         }
 
@@ -114,7 +113,7 @@ namespace RimuruDev.SiriusFuture
             else
                 DisableButton();
 
-            EventHandler.Instance.OnInitUpdateUI?.Invoke();
+            //   EventHandler.Instance.OnInitUpdateUI?.Invoke();
         }
 
         private void DisableButton()
@@ -163,8 +162,6 @@ namespace RimuruDev.SiriusFuture
 
         private void CheckRefs()
         {
-            Instance = this;
-
             if (dataContainer == null)
                 dataContainer = FindObjectOfType<GameDataContainer>();
 

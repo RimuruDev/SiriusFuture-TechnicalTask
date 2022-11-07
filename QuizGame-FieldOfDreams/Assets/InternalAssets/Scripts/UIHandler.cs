@@ -41,7 +41,12 @@ namespace RimuruDev.SiriusFuture
             Debug.Log("Update:: UpdateAttemptsTexts");
             dataContainer.GetHeaderText.CurrentAttemptsText.text = $"Number of attempts: {dataContainer.GetHeaderValue.NumberOfAttempts}";
         }
-            
+        /*
+        private void Update()
+        {
+            dataContainer.GetHeaderText.CurrentScoreText.text = $"Number of points: {dataContainer.GetHeaderValue.NumberOfScores}";
+            dataContainer.GetHeaderText.CurrentAttemptsText.text = $"Number of attempts: {dataContainer.GetHeaderValue.NumberOfAttempts}";
+        }*/
 
         private void OnValidate() => CheckRefs();
 
