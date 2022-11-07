@@ -1,12 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Linq;
 
 namespace RimuruDev.SiriusFuture
 {
@@ -26,20 +19,11 @@ namespace RimuruDev.SiriusFuture
         private TextDataFilteringHandler textDataset = new TextDataFilteringHandler();
         private bool isFilteringByUniqueWords = false;
 
-        private void OnEnable()
-        {
-            OnFilteringAndSetTextDataset += FilteringAndSetTextDataset;
-        }
+        private void OnEnable() => OnFilteringAndSetTextDataset += FilteringAndSetTextDataset;
 
-        private void OnDisable()
-        {
-            OnFilteringAndSetTextDataset -= FilteringAndSetTextDataset;
-        }
+        private void OnDisable() => OnFilteringAndSetTextDataset -= FilteringAndSetTextDataset;
 
-        public void Init()
-        {
-            FilteringAndSetTextDataset();
-        }
+        public void Init() => FilteringAndSetTextDataset();
 
         private void FilteringAndSetTextDataset()
         {

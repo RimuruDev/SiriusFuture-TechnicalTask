@@ -1,9 +1,10 @@
 ﻿using System;
-using UnityEngine;
-using UnityEngine.UI;
-using System.Text.RegularExpressions;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace RimuruDev.SiriusFuture
 {

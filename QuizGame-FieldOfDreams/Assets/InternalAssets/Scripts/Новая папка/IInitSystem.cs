@@ -4,9 +4,4 @@ namespace RimuruDev.SiriusFuture
     {
         public void Init();
     }
-
-    public interface IPreInitSystem
-    {
-        public void PreInit();
-    }
 }
