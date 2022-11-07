@@ -137,7 +137,7 @@ namespace RimuruDev.SiriusFuture
             UnityEngine.Debug.Log("Remove word");
             UnityEngine.Debug.Log($"Seconds: [{stopwatch.Elapsed.Seconds}]. Milliseconds: [{stopwatch.Elapsed.Milliseconds}].");
         }
-        public string[] Remove_(ref string[] array, string item)
+        public string[] Remove_(string[] array, string item)
         {
             int remInd = -1;
 

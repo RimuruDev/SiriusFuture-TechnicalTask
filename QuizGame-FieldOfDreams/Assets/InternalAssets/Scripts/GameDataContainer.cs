@@ -5,6 +5,7 @@ using System;
 using TMPro;
 using Unity.VisualScripting;
 using System.Xml.Linq;
+using UnityEngine.UI;
 
 namespace RimuruDev.SiriusFuture
 {
@@ -27,6 +28,13 @@ namespace RimuruDev.SiriusFuture
         [Header("[===== Scores text =====]"), Space(5)]
         [SerializeField] private HeaderValue headerValue = new HeaderValue();
         public HeaderValue GetHeaderValue => headerValue;
+
+        [Header(" ")]
+        [SerializeField] private Button[] keyboardButtons = new Button[26];
+        public Button[] KeyboardButtons => keyboardButtons;
+
+        public int numattempt = 10;
+        public int numScore = 0;
     }
 
     [Serializable]
@@ -98,7 +106,7 @@ namespace RimuruDev.SiriusFuture
             set
             {
                 numberOfAttempts = Mathf.Clamp(value, 0, ushort.MaxValue);
-                //uiHandler.OnAttemptsText?.Invoke();
+                uiHandler.OnAttemptsText?.Invoke();
             }
         }
 
@@ -108,7 +116,7 @@ namespace RimuruDev.SiriusFuture
             set
             {
                 numberOfScores = Mathf.Clamp(value, 0, ushort.MaxValue);
-                //uiHandler.OnUpdateScoreText?.Invoke();
+                uiHandler.OnUpdateScoreText?.Invoke();
             }
         }
 

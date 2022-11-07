@@ -3,7 +3,7 @@ using System;
 
 namespace RimuruDev.SiriusFuture
 {
-    public sealed class UIHandler : MonoBehaviour
+    public sealed class UIHandler : MonoBehaviour, IInitSystem
     {
         public Action OnUpdateScoreText;
         public Action OnAttemptsText;
@@ -15,7 +15,7 @@ namespace RimuruDev.SiriusFuture
 
         private void Start()
         {
-           
+
         }
 
         private void OnEnable()
@@ -59,6 +59,16 @@ namespace RimuruDev.SiriusFuture
 
             if (wordDataHandler == null)
                 wordDataHandler = FindObjectOfType<WordDataHandler>();
+        }
+
+        public void Init()
+        {
+            dataContainer.GetHeaderValue.NumberOfAttempts = dataContainer.numattempt;
+
+            if (PlayerPrefs.GetInt("Score") == 0)
+                dataContainer.GetHeaderValue.NumberOfScores = dataContainer.numScore;
+            else
+                dataContainer.GetHeaderValue.NumberOfScores = PlayerPrefs.GetInt("Score");
         }
     }
 }

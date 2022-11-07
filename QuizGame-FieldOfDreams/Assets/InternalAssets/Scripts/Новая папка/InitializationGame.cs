@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,6 +12,11 @@ namespace RimuruDev.SiriusFuture
 {
     public sealed class InitializationGame : MonoBehaviour
     {
+        [Header("Container")]
+        public GameObject[] container;
+
+
+
         [SerializeField] private GameDataContainer dataContainer;
         [SerializeField] private Sturtup sturtup;
         [SerializeField] private UIHandler UIHandler;
@@ -45,6 +52,15 @@ namespace RimuruDev.SiriusFuture
 
         private void OnValidate()
         {
+            //if (null == container) return;
+
+            for (int i = 0; i < container.Length; i++)
+            {
+                if (container[i].GetComponent<IInitSystem>() == null)
+                    container[i] = null;
+            }
+
+
             if (dataContainer == null)
                 dataContainer = FindObjectOfType<GameDataContainer>();
 
@@ -59,16 +75,23 @@ namespace RimuruDev.SiriusFuture
 
         private void Start()
         {
-            Initializator();
-            SetinitialAttemptValue();
+            for (int i = 0; i < container.Length; i++)
+                container[i].GetComponent<IInitSystem>().Init();
+
+
+
+            //  Initializator();
+            //  SetinitialAttemptValue();
         }
 
         private void Update()
         {
-            dataContainer.GetHeaderText.CurrentScoreText.text = $"Number of points: {dataContainer.GetHeaderValue.NumberOfScores}";
-            dataContainer.GetHeaderText.CurrentAttemptsText.text = $"Number of attempts: {dataContainer.GetHeaderValue.NumberOfAttempts}";
+            //dataContainer.GetHeaderText.CurrentScoreText.text = $"Number of points: {dataContainer.GetHeaderValue.NumberOfScores}";
+            //    dataContainer.GetHeaderText.CurrentAttemptsText.text = $"Number of attempts: {dataContainer.GetHeaderValue.NumberOfAttempts}";
         }
 
+        #region Old
+        /*
         private bool isWin;
         public void Initializator()
         {
@@ -85,6 +108,8 @@ namespace RimuruDev.SiriusFuture
             CacheAllKeyboardButtons();
             NormalButtons();
         }
+
+
 
         private bool isInit = false;
         private void InitWord()
@@ -131,6 +156,9 @@ namespace RimuruDev.SiriusFuture
 
             int GetRandomArrayElementIndex() => new System.Random().Next(0, array.Length);
         }
+
+
+
         private readonly string pathOut = @$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt";
         private void NextSession()
         {
@@ -140,7 +168,7 @@ namespace RimuruDev.SiriusFuture
             {
                 string word = GetCurrenWord;
 
-                var arrayCopy = filteringHandler.Remove_(ref array, word);
+                var arrayCopy = filteringHandler.Remove_(array, word);
 
                 string controlCharacter = "\r\n";
                 string pattern = @"\b[a-z]+\b";
@@ -354,5 +382,7 @@ namespace RimuruDev.SiriusFuture
             else
                 dataContainer.GetHeaderValue.NumberOfScores = PlayerPrefs.GetInt("Score");
         }
+        */
+        #endregion
     }
 }
