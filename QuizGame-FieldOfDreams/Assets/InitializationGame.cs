@@ -29,6 +29,7 @@ namespace RimuruDev.SiriusFuture
 
         // Button GUI
         private Color normalColor = new Color(255, 255, 255, 255);
+        private Color blackColor = new Color(0, 0, 0, 255);
         private Color invisibleColor = new Color(74, 70, 69, 0);
 
         // Init test value
@@ -141,6 +142,7 @@ namespace RimuruDev.SiriusFuture
             {
                 currentWord = array[GetRandomArrayElementIndex()];
                 currentWordChar = currentWord.ToCharArray();
+                Debug.Log($"currentWordChar = {currentWordChar.Length - 1}");
             }
 
             int GetRandomArrayElementIndex() => new System.Random().Next(0, array.Length);
@@ -148,15 +150,53 @@ namespace RimuruDev.SiriusFuture
             isInitTextFile = true;
         }
 
+        private void NextSession()
+        {
+            PlayerPrefs.SetInt("Score", dataContainer.GetHeaderValue.NumberOfScores);
+            NormalButtons();
+            InitWord();
+            InitialWordToUnravel();
+            EnableEmptyElement();
+            void EnableEmptyElement()
+            {
+                //  var currentWord = wordDataHandler.GetCurrentWordChar;
+                //  var currentWordLengthNormalize = currentWord.Length - 1;
+                //   var allElementsLength = dataContainer.GetElementContainer.Element.Length;
+
+                //  Debug.Log($"Word length: {GetWordLenthNormolized}");
+                // Debug.Log($"Word length: {currentWordLengthNormalize}");
+                //   Debug.Log($"All element length: {allElementsLength}");
+                // Temp trash solution
+
+                for (int i = GetWordLenthNormolized; i < dataContainer.GetElementContainer.Element.Length; i++)
+                {
+                    var element = dataContainer.GetElementContainer.Element[i];
+                    element.GetComponent<Image>().color = new Color(74, 70, 69, 0);
+                    //     element.GetChild(0).gameObject.SetActive(false);
+                }
+            }
+            //Initializator();
+            // NormalButtons();
+            //  UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+            // PlayerPrefs.SetInt("Attempt", dataContainer.GetHeaderValue.NumberOfAttempts);
+        }
+
         private void InitialWordToUnravel()
         {
+            Debug.Log($"currentWordChar InitialWordToUnravel = {currentWordChar.Length - 1}");
+            Debug.Log($"get length  InitialWordToUnravel= {GetWordLenthNormolized}");
+
+            int allElementsLength = dataContainer.GetElementContainer.Element.Length;
+
             ClosedAllWordElement();
-            EnableEmptyElement();
             OpenWordElements();
+            EnableEmptyElement();
+
+
 
             void ClosedAllWordElement()
             {
-                for (int i = 0; i < dataContainer.GetElementContainer.Element.Length; i++)
+                for (int i = 0; i < allElementsLength; i++)
                     dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject.SetActive(false);
             }
 
@@ -164,27 +204,29 @@ namespace RimuruDev.SiriusFuture
             {
                 //  var currentWord = wordDataHandler.GetCurrentWordChar;
                 //  var currentWordLengthNormalize = currentWord.Length - 1;
-                var allElementsLength = dataContainer.GetElementContainer.Element.Length;
+                //   var allElementsLength = dataContainer.GetElementContainer.Element.Length;
 
-                Debug.Log($"Word length: {GetWordLenthNormolized}");
+                //  Debug.Log($"Word length: {GetWordLenthNormolized}");
                 // Debug.Log($"Word length: {currentWordLengthNormalize}");
-                Debug.Log($"All element length: {allElementsLength}");
+                //   Debug.Log($"All element length: {allElementsLength}");
                 // Temp trash solution
 
                 for (int i = GetWordLenthNormolized; i < allElementsLength; i++)
                 {
                     var element = dataContainer.GetElementContainer.Element[i];
                     element.GetComponent<Image>().color = new Color(74, 70, 69, 0);
-                    element.GetChild(0).gameObject.SetActive(false);
+                    //     element.GetChild(0).gameObject.SetActive(false);
                 }
             }
 
             void OpenWordElements()
             {
-                for (int i = 0; i < GetWordLenthNormolized; i++)
+                for (int i = 0; i < GetCurrentWordChar.Length - 1; i++)
                 {
+                    dataContainer.GetElementContainer.Element[i].GetComponent<Image>().color = blackColor;
                     dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject
                         .GetComponent<TMPro.TMP_Text>().text = GetCurrentWordChar[i].ToString().ToUpper();
+                    Debug.Log(GetCurrentWordChar[i]);
                 }
             }
         }
@@ -333,9 +375,9 @@ namespace RimuruDev.SiriusFuture
                     Debug.Log("[============== Popup win ==============]");
                     Debug.Log($"Filaai!!!  NumberOfAttempts == {dataContainer.GetHeaderValue.NumberOfScores} + {dataContainer.GetHeaderValue.NumberOfAttempts}");
                     dataContainer.GetHeaderValue.NumberOfScores += dataContainer.GetHeaderValue.NumberOfAttempts;
-                    UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+                    //UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
 
-                    //NextSession();
+                    NextSession();
                 }
 
             }
@@ -357,16 +399,6 @@ namespace RimuruDev.SiriusFuture
                 PlayerPrefs.SetInt("Score", 0);
                 UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
             }
-        }
-
-        private void NextSession()
-        {
-            PlayerPrefs.SetInt("Score", dataContainer.GetHeaderValue.NumberOfScores);
-
-            Initializator();
-            NormalButtons();
-            //  UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-            // PlayerPrefs.SetInt("Attempt", dataContainer.GetHeaderValue.NumberOfAttempts);
         }
 
         private void SetinitialAttemptValue()

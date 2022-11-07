@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using TMPro;
 using Unity.VisualScripting;
+using System.Xml.Linq;
 
 namespace RimuruDev.SiriusFuture
 {
@@ -35,17 +36,17 @@ namespace RimuruDev.SiriusFuture
 
         [SerializeField] private Transform[] element;
 
-        public Transform[] Element
-        {
-            get => element;
-            set
-            {
-                if (element.Length < maximumWordLength)
-                    element = value;
-                else
-                    Debug.Log("Element is full!");
-            }
-        }
+        public Transform[] Element { get => element; set => element = value; }
+        /* {
+             get => element;
+             set
+             {
+                 if (element.Length < maximumWordLength)
+                     element = value;
+                 else
+                     Debug.Log("Element is full!");
+             }
+         }*/
     }
 
     [Serializable]
@@ -59,41 +60,10 @@ namespace RimuruDev.SiriusFuture
         [SerializeField] private Transform[] middleUserInterfaceKeyboard;
         [SerializeField] private Transform[] bottomUserInterfaceKeyboard;
 
-        public Transform[] HeaderUserInterfaceKeyboard
-        {
-            get => headerUserInterfaceKeyboard;
-            set
-            {
-                if (headerUserInterfaceKeyboard.Length < keyboardHeaderLength)
-                    headerUserInterfaceKeyboard = value;
-                else
-                    Debug.Log("HeaderUserInterfaceKeyboard is full!");
-            }
-        }
+        public Transform[] HeaderUserInterfaceKeyboard { get => headerUserInterfaceKeyboard; set => headerUserInterfaceKeyboard = value; }
+        public Transform[] MiddleUserInterfaceKeyboard { get => middleUserInterfaceKeyboard; set => middleUserInterfaceKeyboard = value; }
+        public Transform[] BottomUserInterfaceKeyboard { get => bottomUserInterfaceKeyboard; set => bottomUserInterfaceKeyboard = value; }
 
-        public Transform[] MiddleUserInterfaceKeyboard
-        {
-            get => middleUserInterfaceKeyboard;
-            set
-            {
-                if (middleUserInterfaceKeyboard.Length < keyboardMiddleLength)
-                    middleUserInterfaceKeyboard = value;
-                else
-                    Debug.Log("MiddleUserInterfaceKeyboard is full!");
-            }
-        }
-
-        public Transform[] BottomUserInterfaceKeyboard
-        {
-            get => bottomUserInterfaceKeyboard;
-            set
-            {
-                if (bottomUserInterfaceKeyboard.Length < keyboardBottomLength)
-                    bottomUserInterfaceKeyboard = value;
-                else
-                    Debug.Log("BottomUserInterfaceKeyboard is full!");
-            }
-        }
     }
 
     [Serializable]
