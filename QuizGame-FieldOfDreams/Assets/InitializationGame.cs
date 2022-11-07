@@ -1,8 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Networking.UnityWebRequest;
 
 namespace RimuruDev.SiriusFuture
 {
@@ -21,10 +27,16 @@ namespace RimuruDev.SiriusFuture
         [SerializeField, TextArea(), Space(5)] private string[] array;
         [SerializeField] private Button[] allKeyboardButtons;// = new Button[26];
 
+        // Button GUI
+        private Color normalColor = new Color(255, 255, 255, 255);
+        private Color invisibleColor = new Color(74, 70, 69, 0);
+
         // Init test value
         public int numattempt = 10;
         public int numScore = 0;
         private int wordHit = 0;
+
+        [SerializeField] private bool isInitTextFile = false;
 
         private TextDataFilteringHandler filteringHandler = new TextDataFilteringHandler();
 
@@ -61,6 +73,7 @@ namespace RimuruDev.SiriusFuture
         private void Start()
         {
             Initializator();
+            SetinitialAttemptValue();
         }
 
         private void Update()
@@ -72,26 +85,55 @@ namespace RimuruDev.SiriusFuture
         public void Initializator()
         {
             InitWord();
-            InitialWordToUnravel();
             InitialUserInterface();
+            InitialWordToUnravel();
             CacheAllKeyboardButtons();
-
-            SetinitialAttemptValue();
+            NormalButtons();
         }
-
+        private readonly string path = @$"{Application.streamingAssetsPath}/OriginalTextOfAlicesBook.txt";
+        private readonly string pathOut = @$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt";
         private void InitWord()
         {
             // Filtred book data
             {
+                //    if (isInitTextFile == false)
+                // {
+
                 if (filteringHandler == null) filteringHandler = new TextDataFilteringHandler();
+
                 filteringHandler.FilteringByUniqueWords();
+
+
+
+                string textData = filteringHandler.GetFilteringByUniqueWords();
+                //if (isInitTextFile == false)
+                //  {
+                // Get filtrea string data
+
+                // Get current char[] answer word
+                array = textData.Split(new char[] { '\n' });
+
+                //   }
+
             }
 
-            // Get filtrea string data
-            string textData = filteringHandler.GetFilteringByUniqueWords();
+            //  }
+            /*
+            else
+            {
+                string controlCharacter = "\r\n";
+                string pattern = @"\b[a-z]+\b";
 
-            // Get current char[] answer word
-            array = textData.Split(new char[] { '\n' });
+                var result = string.Join(controlCharacter, Regex.Matches(File.ReadAllText(@$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt"), pattern, RegexOptions.IgnoreCase)
+                     .Select(x => x.Value)
+                     .Where(x => x.Length > 4)
+                     .GroupBy(x => x)
+                     .Select(x => x.Key.ToLower())
+                     .OrderBy(x => x)
+                     .Distinct(StringComparer.CurrentCultureIgnoreCase));
+
+                array = result.Split(new char[] { '\n' });
+            }*/
 
             SetCurrentWord();
 
@@ -102,6 +144,8 @@ namespace RimuruDev.SiriusFuture
             }
 
             int GetRandomArrayElementIndex() => new System.Random().Next(0, array.Length);
+
+            isInitTextFile = true;
         }
 
         private void InitialWordToUnravel()
@@ -179,6 +223,18 @@ namespace RimuruDev.SiriusFuture
             }
         }
 
+        private void NormalButtons()
+        {
+            var length = allKeyboardButtons.Length;
+
+            for (int i = 0; i < length; i++)
+            {
+                allKeyboardButtons[i].GetComponent<Image>().color = normalColor;
+                allKeyboardButtons[i].interactable = true;
+                allKeyboardButtons[i].transform.GetChild(0).gameObject.SetActive(true);
+            }
+        }
+
         private void CacheAllKeyboardButtons()
         {
             int headerKeywordLength = dataContainer.GetUserInterfaceData.HeaderUserInterfaceKeyboard.Length;
@@ -189,6 +245,11 @@ namespace RimuruDev.SiriusFuture
             {
                 allKeyboardButtons[i] = dataContainer.GetUserInterfaceData.HeaderUserInterfaceKeyboard[i]
                     .GetComponent<Button>();
+
+                // вынести в отдельный метод и там спавристь все кнопки и обработать.
+                //allKeyboardButtons[i].GetComponent<Image>().color = normalColor;
+                //allKeyboardButtons[i].interactable = true;
+                //allKeyboardButtons[i].transform.GetChild(0).gameObject.SetActive(true);
             }
 
             for (int i = 0; i < middleKeywordLength; i++)
@@ -236,16 +297,16 @@ namespace RimuruDev.SiriusFuture
 
                 if (isAnswerWord)
                 {
-                    OpenAnswerWords(currenAnswerWord);
+                    OpenAnswerWords(currenAnswerWord, butoon);
                 }
                 else
-                    DisableButton();
+                    DisableButton(butoon);
 
                 //   EventHandler.Instance.OnInitUpdateUI?.Invoke();
             }
         }
 
-        private void OpenAnswerWords(string word)
+        private void OpenAnswerWords(string word, Button button)
         {
             var currentWord = GetCurrentWordChar;
 
@@ -256,6 +317,7 @@ namespace RimuruDev.SiriusFuture
                     dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject.SetActive(true);
                     dataContainer.GetHeaderValue.NumberOfScores++;
                     Debug.Log("NumberOfScores ++");
+                    button.interactable = false;
                     CheckWin();
                 }
             }
@@ -264,33 +326,57 @@ namespace RimuruDev.SiriusFuture
             {
                 wordHit += 1;
                 //var currentWord = wordDataHandler.GetCurrentWordChar;
-
+                Debug.Log("wordHit = " + wordHit);
                 if (GetWordLenthNormolized == wordHit)
                 {
+                    wordHit = 0;
                     Debug.Log("[============== Popup win ==============]");
                     Debug.Log($"Filaai!!!  NumberOfAttempts == {dataContainer.GetHeaderValue.NumberOfScores} + {dataContainer.GetHeaderValue.NumberOfAttempts}");
                     dataContainer.GetHeaderValue.NumberOfScores += dataContainer.GetHeaderValue.NumberOfAttempts;
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+
+                    //NextSession();
                 }
 
             }
         }
 
-        private void DisableButton()
+        private void DisableButton(Button butoon)
         {
             dataContainer.GetHeaderValue.NumberOfAttempts -= 1;
             Debug.Log("NumberOfAttempts --");
 
+            butoon.interactable = false;
+            butoon.gameObject.GetComponent<Image>().color = new Color(74, 70, 69, 0);
+            butoon.transform.GetChild(0).gameObject.SetActive(false);
+            // butoon.gameObject.SetActive(false);
+
             if (dataContainer.GetHeaderValue.NumberOfAttempts == 0)
             {
                 Debug.Log("[============== Popup failure ==============]");
-
+                PlayerPrefs.SetInt("Score", 0);
+                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
             }
+        }
+
+        private void NextSession()
+        {
+            PlayerPrefs.SetInt("Score", dataContainer.GetHeaderValue.NumberOfScores);
+
+            Initializator();
+            NormalButtons();
+            //  UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+            // PlayerPrefs.SetInt("Attempt", dataContainer.GetHeaderValue.NumberOfAttempts);
         }
 
         private void SetinitialAttemptValue()
         {
             dataContainer.GetHeaderValue.NumberOfAttempts = numattempt;
-            dataContainer.GetHeaderValue.NumberOfScores = numScore;
+
+            if (PlayerPrefs.GetInt("Score") == 0)
+                dataContainer.GetHeaderValue.NumberOfScores = numScore;
+            else
+                dataContainer.GetHeaderValue.NumberOfScores = PlayerPrefs.GetInt("Score");
         }
     }
 }

@@ -110,8 +110,8 @@ namespace RimuruDev.SiriusFuture
         [SerializeField] private TMP_Text currentAttemptsText;
         [SerializeField] private TMP_Text currentScoreText;
 
-        public TMP_Text CurrentAttemptsText { get; set; }
-        public TMP_Text CurrentScoreText { get; set; }
+        public TMP_Text CurrentAttemptsText { get => currentAttemptsText; set => currentAttemptsText = value; }
+        public TMP_Text CurrentScoreText { get => currentScoreText; set => currentScoreText = value; }
     }
 
     [Serializable]
