@@ -8,14 +8,12 @@ namespace RimuruDev.SiriusFuture
         public Action OnUpdateScoreText;
         public Action OnAttemptsText;
 
-        [SerializeField, HideInInspector] private GameDataContainer dataContainer;
-        [SerializeField, HideInInspector] private WordDataHandler wordDataHandler;
+        private GameDataContainer dataContainer;
 
-        private void Awake() => CheckRefs();
-
-        private void Start()
+        private void Awake()
         {
-
+            if (dataContainer == null)
+                dataContainer = FindObjectOfType<GameDataContainer>();
         }
 
         private void OnEnable()
@@ -30,36 +28,11 @@ namespace RimuruDev.SiriusFuture
             OnAttemptsText -= UpdateAttemptsText;
         }
 
-        public void UpdateScoreText()
-        {
-            Debug.Log("Update:: UpdateScoreText");
+        public void UpdateScoreText() =>
             dataContainer.GetHeaderText.CurrentScoreText.text = $"Number of points: {dataContainer.GetHeaderValue.NumberOfScores}";
-        }
 
-        private void UpdateAttemptsText()
-        {
-            Debug.Log("Update:: UpdateAttemptsTexts");
+        private void UpdateAttemptsText() =>
             dataContainer.GetHeaderText.CurrentAttemptsText.text = $"Number of attempts: {dataContainer.GetHeaderValue.NumberOfAttempts}";
-        }
-        /*
-        private void Update()
-        {
-            dataContainer.GetHeaderText.CurrentScoreText.text = $"Number of points: {dataContainer.GetHeaderValue.NumberOfScores}";
-            dataContainer.GetHeaderText.CurrentAttemptsText.text = $"Number of attempts: {dataContainer.GetHeaderValue.NumberOfAttempts}";
-        }*/
-
-        private void OnValidate() => CheckRefs();
-
-        private void CheckRefs()
-        {
-            if (dataContainer == null)
-                dataContainer = FindObjectOfType<GameDataContainer>();
-
-            // if (sturtup == null) sturtup = FindObjectOfType<Sturtup>();
-
-            if (wordDataHandler == null)
-                wordDataHandler = FindObjectOfType<WordDataHandler>();
-        }
 
         public void Init()
         {
