@@ -110,58 +110,8 @@ namespace RimuruDev.SiriusFuture
         [SerializeField] private TMP_Text currentAttemptsText;
         [SerializeField] private TMP_Text currentScoreText;
 
-        public TMP_Text CurrentAttemptsText
-        {
-            get
-            {
-                /*
-                if (currentAttemptsText == null)
-                {
-                    Debug.LogError("CurrentAttemptsText null reference");
-                    return default;
-                }
-*/
-
-                return currentAttemptsText;
-            }
-            set
-            {
-                /*
-                if (currentAttemptsText != null)
-                {
-                    Debug.LogError("CurrentAttemptsText is not null reference! Please use unity editor for set ref");
-                    return;
-                }
-                */
-                currentAttemptsText = value;
-            }
-        }
-
-        public TMP_Text CurrentScoreText
-        {
-            get => currentScoreText;
-            /*{/
-                if (currentScoreText == null)
-                {
-                    Debug.LogError("CurrentScoreText null reference");
-                    return default;
-                }
-
-                return currentAttemptsText;
-                
-                }  */
-            set
-            {
-                /*
-                if (currentScoreText != null)
-                {
-                    Debug.LogError("CurrentScoreText is not null reference! Please use unity editor for set ref");
-                    return;
-                }*/
-
-                currentScoreText = value;
-            }
-        }
+        public TMP_Text CurrentAttemptsText { get; set; }
+        public TMP_Text CurrentScoreText { get; set; }
     }
 
     [Serializable]
