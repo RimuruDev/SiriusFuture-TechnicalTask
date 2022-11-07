@@ -74,14 +74,29 @@ namespace RimuruDev.SiriusFuture
             NormalButtons();
         }
 
+        private bool isInit = false;
         private void InitWord()
         {
-            if (filteringHandler == null) filteringHandler = new TextDataFilteringHandler();
-            filteringHandler.FilteringByUniqueWords();
-            string textData = filteringHandler.GetFilteringByUniqueWords();
-            array = textData.Split(new char[] { '\n' });
+            if (isInit == false)
+            {
+                if (filteringHandler == null) filteringHandler = new TextDataFilteringHandler();
+                filteringHandler.FilteringByUniqueWords();
+
+                string textData = filteringHandler.GetFilteringByUniqueWords();
+                array = textData.Split(new char[] { '\n' });
+
+                Debug.Log("Init ward = false");
+            }
+            else
+            {
+                string textData = filteringHandler.GetFilteringByUniqueWords();
+                array = textData.Split(new char[] { '\n' });
+                Debug.Log("Init ward = true");
+            }
 
             SetCurrentWord();
+
+            isInit = true;
 
             void SetCurrentWord()
             {
