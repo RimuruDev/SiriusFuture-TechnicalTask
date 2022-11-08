@@ -22,11 +22,15 @@ namespace RimuruDev.SiriusFuture
         [SerializeField] private HeaderText headerText;
         public HeaderText GetHeaderText => headerText;
 
+        [Header("Popups"), Space(5)]
         [SerializeField] private GameObject winPopup;
         public GameObject WinPopup { get => winPopup; private set => winPopup = value; }
 
         [SerializeField] private GameObject warningPopup;
         public GameObject WarningPopup { get => warningPopup; private set => warningPopup = value; }
+
+        [SerializeField] private GameObject failurePopup;
+        public GameObject FailurePopup { get => failurePopup; private set => failurePopup = value; }
 
         [SerializeField, HideInInspector] private Button[] keyboardButtons = new Button[26]; // TODO: Add Enam Keyboard Type. English = 26 buttons
         public Button[] KeyboardButtons => keyboardButtons;

@@ -12,6 +12,7 @@ namespace RimuruDev.SiriusFuture
         [SerializeField, HideInInspector] private GameDataContainer dataContainer;
         [SerializeField, HideInInspector] private WordHandler wordHandler;
         [SerializeField, HideInInspector] private CurrentProgress currentProgress;
+        [SerializeField, HideInInspector] private UIHandler uiHandler;
         private SaveUserProgress saveUserProgress;
 
         private void Awake() => CheckRefs();
@@ -21,6 +22,21 @@ namespace RimuruDev.SiriusFuture
 
         [System.Diagnostics.Conditional(Tag.DEBUG)]
         private void OnValidate() => CheckRefs();
+
+        private void ClickWrongWord(Button button)
+        {
+            dataContainer.GetHeaderValue.NumberOfAttempts -= 1;
+
+            button.interactable = false;
+            button.gameObject.GetComponent<Image>().color = new Color(74, 70, 69, 0);
+            button.transform.GetChild(0).gameObject.SetActive(false);
+
+            if (dataContainer.GetHeaderValue.NumberOfAttempts == 0)
+            {
+                PlayerPrefs.DeleteAll();
+                uiHandler.OnFailurePopup(true);
+            }
+        }
 
         private void CheckRefs()
         {
@@ -34,21 +50,9 @@ namespace RimuruDev.SiriusFuture
 
             if (currentProgress == null)
                 currentProgress = FindObjectOfType<CurrentProgress>();
-        }
 
-        private void ClickWrongWord(Button button)
-        {
-            dataContainer.GetHeaderValue.NumberOfAttempts -= 1;
-
-            button.interactable = false;
-            button.gameObject.GetComponent<Image>().color = new Color(74, 70, 69, 0);
-            button.transform.GetChild(0).gameObject.SetActive(false);
-
-            if (dataContainer.GetHeaderValue.NumberOfAttempts == 0)
-            {
-                saveUserProgress.OnSaveScore(0);
-                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-            }
+            if (uiHandler == null)
+                uiHandler = FindObjectOfType<UIHandler>();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace RimuruDev.SiriusFuture
         [SerializeField, HideInInspector] private WrongWord wrongWord;
         [SerializeField, HideInInspector] private KeyboardUIHandler keyboardUIHandler;
         [SerializeField, HideInInspector] private WordElementSwitcher wordElementSwitcher;
-        [SerializeField, HideInInspector] private Buttonhandler buttonhandler;
+        [SerializeField, HideInInspector] private ButtonHandler buttonhandler;
         [SerializeField, HideInInspector] private RemoveCurrentWordHandler removeCurrentWordHandler;
 
         private readonly SaveUserProgress saveUserProgress = new SaveUserProgress();
@@ -64,7 +64,7 @@ namespace RimuruDev.SiriusFuture
                 removeCurrentWordHandler = FindObjectOfType<RemoveCurrentWordHandler>();
 
             if (buttonhandler == null)
-                buttonhandler = FindObjectOfType<Buttonhandler>();
+                buttonhandler = FindObjectOfType<ButtonHandler>();
         }
     }
 }

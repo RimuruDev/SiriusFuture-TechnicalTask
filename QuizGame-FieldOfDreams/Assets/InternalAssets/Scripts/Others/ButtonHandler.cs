@@ -11,7 +11,7 @@ namespace RimuruDev.SiriusFuture
     [RequireComponent(typeof(CurrentProgress))]
     [RequireComponent(typeof(NextGameSession))]
     [RequireComponent(typeof(RemoveCurrentWordHandler))]
-    public sealed class Buttonhandler : MonoBehaviour
+    public sealed class ButtonHandler : MonoBehaviour
     {
         public Action OnCacheAndSubscribeAllKeyboardButtons;
 

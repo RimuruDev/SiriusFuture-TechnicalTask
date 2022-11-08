@@ -10,6 +10,7 @@ namespace RimuruDev.SiriusFuture
         public Action OnUpdateScoreText;
         public Action OnAttemptsText;
         public Action<bool> OnWinPopup;
+        public Action<bool> OnFailurePopup;
         public Action<bool> OnWarningPopup;
 
         [SerializeField, HideInInspector] private GameDataContainer dataContainer;
@@ -22,6 +23,7 @@ namespace RimuruDev.SiriusFuture
             OnUpdateScoreText += UpdateNumberOfPointsText;
             OnAttemptsText += UpdateAttemptsText;
             loadUserProgress.OnEnabled();
+            OnFailurePopup += ShowFailurePopup;
             OnWinPopup += ShowWinPopup;
             OnWarningPopup += ShowWarningPopup;
         }
@@ -31,6 +33,7 @@ namespace RimuruDev.SiriusFuture
             OnUpdateScoreText -= UpdateNumberOfPointsText;
             OnAttemptsText -= UpdateAttemptsText;
             loadUserProgress.OnDisabled();
+            OnFailurePopup -= ShowFailurePopup;
             OnWinPopup -= ShowWinPopup;
             OnWarningPopup -= ShowWarningPopup;
         }
@@ -47,6 +50,8 @@ namespace RimuruDev.SiriusFuture
         private void ShowWinPopup(bool isActive) => dataContainer.WinPopup.SetActive(isActive);
 
         private void ShowWarningPopup(bool isActive) => dataContainer.WarningPopup.SetActive(true);
+
+        private void ShowFailurePopup(bool isActive) => dataContainer.FailurePopup.SetActive(true);
 
         public void Init() => loadUserProgress.OnLoadScore(dataContainer);
 

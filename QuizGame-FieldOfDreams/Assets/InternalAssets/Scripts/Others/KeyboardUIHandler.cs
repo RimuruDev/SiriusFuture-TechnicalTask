@@ -12,7 +12,7 @@ namespace RimuruDev.SiriusFuture
         public Action OnNormalizationButtons;
 
         [SerializeField, HideInInspector] private GameDataContainer dataContainer;
-        [SerializeField, HideInInspector] private Buttonhandler buttonhandler;
+        [SerializeField, HideInInspector] private ButtonHandler buttonhandler;
 
         private void Awake() => CheckRefs();
 
@@ -89,7 +89,7 @@ namespace RimuruDev.SiriusFuture
                 dataContainer = FindObjectOfType<GameDataContainer>();
 
             if (buttonhandler == null)
-                buttonhandler = FindObjectOfType<Buttonhandler>();
+                buttonhandler = FindObjectOfType<ButtonHandler>();
         }
     }
 }
