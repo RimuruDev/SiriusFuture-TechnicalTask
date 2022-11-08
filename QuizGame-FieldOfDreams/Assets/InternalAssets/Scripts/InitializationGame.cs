@@ -23,8 +23,6 @@ namespace RimuruDev.SiriusFuture
             {
                 if (container[i].GetComponent<IInitSystem>() == null)
                     container[i] = null;
-                //else
-                // Debug.LogWarning("You are trying to inject an object that has not signed a contract with IInitSystem.");
             }
         }
 

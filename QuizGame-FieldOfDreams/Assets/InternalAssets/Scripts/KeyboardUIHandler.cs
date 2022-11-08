@@ -14,20 +14,17 @@ namespace RimuruDev.SiriusFuture
     {
         public Action OnFillingKeyboardUI;
         public Action OnNormalizationButtons;
-        public Action OnRemoveCurrentWordWithArrayList;
         public Action OnCheckingProgress;
         public Action OnNextSestion;
 
         private GameDataContainer dataContainer;
         private WordElementSwitcher wordElementSwitcher;
         private WordHandler wordHandler;
+        private Buttonhandler buttonhandler;
 
         private readonly SaveUserProgress saveUserProgress = new SaveUserProgress();
         private readonly LoadUserProgress loadUserProgress = new LoadUserProgress();
-        // private TextDataFilteringHandler textDataset;
-
-        private readonly string path = @$"{Application.streamingAssetsPath}/OriginalTextOfAlicesBook.txt";
-        private readonly string pathOut = @$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt";
+        private RemoveCurrentWordHandler removeCurrentWordHandler;
 
         private int wordHit = 0;
 
@@ -42,35 +39,38 @@ namespace RimuruDev.SiriusFuture
             if (wordElementSwitcher == null)
                 wordElementSwitcher = FindObjectOfType<WordElementSwitcher>();
 
-            //textDataset = new TextDataFilteringHandler(dataContainer);
+            buttonhandler = FindObjectOfType<Buttonhandler>();
+
+            // removeCurrentWordHandler = new RemoveCurrentWordHandler(dataContainer, wordHandler);
         }
 
         public void Init()
         {
             FillingKeyboardUI();
-            CacheAllKeyboardButtons();
+            //CacheAllKeyboardButtons();
+            buttonhandler.OnCacheAndSubscribeAllKeyboardButtons?.Invoke();
         }
 
         private void OnEnable()
         {
             OnFillingKeyboardUI += FillingKeyboardUI;
             OnNormalizationButtons += NormalizationButtons;
-            OnRemoveCurrentWordWithArrayList += RemoveCurrentWordWithArrayList;
+           // removeCurrentWordHandler.OnEnabled();
             saveUserProgress.OnEnabled();
             loadUserProgress.OnEnabled();
-            OnCheckingProgress += CheckingProgress;
-            OnNextSestion += NextSession;
+         //   OnCheckingProgress += CheckingProgress;
+          //  OnNextSestion += NextSession;
         }
 
         private void OnDisable()
         {
             OnFillingKeyboardUI -= FillingKeyboardUI;
             OnNormalizationButtons -= NormalizationButtons;
-            OnRemoveCurrentWordWithArrayList -= RemoveCurrentWordWithArrayList;
+            //removeCurrentWordHandler.OnDisabledd();
             saveUserProgress.OnDisabled();
             loadUserProgress.OnDisabled();
-            OnCheckingProgress -= CheckingProgress;
-            OnNextSestion -= NextSession;
+          //  OnCheckingProgress -= CheckingProgress;
+            //OnNextSestion -= NextSession;
         }
 
         private void FillingKeyboardUI()
@@ -118,7 +118,7 @@ namespace RimuruDev.SiriusFuture
                 dataContainer.KeyboardButtons[i].transform.GetChild(0).gameObject.SetActive(true);
             }
         }
-
+        /*
         private void CacheAllKeyboardButtons()
         {
             int headerKeywordLength = dataContainer.GetUserInterfaceData.HeaderUserInterfaceKeyboard.Length;
@@ -190,10 +190,10 @@ namespace RimuruDev.SiriusFuture
                 {
                     dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject.SetActive(true);
 
-                    // TODO: Mode in scriptable object. gameObject.SetActive(false) and gameObject.interactable = false;
-                    button.interactable = false;
-                    //OnCheckingProgress?.Invoke();
-                    CheckingProgress();
+                    button.GetComponent<Image>().color = new Color(74, 70, 69, 0);
+                    button.transform.GetChild(0).gameObject.SetActive(false);
+
+                    OnCheckingProgress?.Invoke();
                 }
             }
         }
@@ -206,8 +206,7 @@ namespace RimuruDev.SiriusFuture
             {
                 wordHit = 0;
                 dataContainer.GetHeaderValue.NumberOfPoints += dataContainer.GetHeaderValue.NumberOfAttempts;
-                // OnNextSestion?.Invoke();
-                NextSession();
+                OnNextSestion?.Invoke();
             }
         }
 
@@ -228,8 +227,8 @@ namespace RimuruDev.SiriusFuture
 
         private void NextSession()
         {
-            //OnRemoveCurrentWordWithArrayList?.Invoke();
-            RemoveCurrentWordWithArrayList();
+            removeCurrentWordHandler.OnRemoveCurrentWordHandler?.Invoke();
+
             wordHandler.OnFilteringAndSetTextDataset();
             saveUserProgress.OnSaveScore(dataContainer.GetHeaderValue.NumberOfPoints);
             OnNormalizationButtons?.Invoke();
@@ -242,26 +241,6 @@ namespace RimuruDev.SiriusFuture
             dataContainer.GetHeaderValue.NumberOfAttempts = dataContainer.GameplaySettings.NumberOfAttempts;
         }
 
-        private void RemoveCurrentWordWithArrayList()
-        {
-            string word = wordHandler.GetCurrenWord;
-            Debug.Log(word);
-            Debug.Log(wordHandler.GetWordArray.Length);
-
-            var arrayCopy = dataContainer.GetTextDataset.RemoveCurrentWordFromArray(ref wordHandler.wordArray, word);
-
-            string controlCharacter = "\r\n";
-            string pattern = @"\b[a-z]+\b";
-
-            string resultStr = string.Join(controlCharacter, arrayCopy);
-
-            File.WriteAllText(pathOut, string.Join(controlCharacter, Regex.Matches(resultStr, pattern, RegexOptions.IgnoreCase)
-                 .Select(x => x.Value)
-                 .Where(x => (x.Length >= dataContainer.GameplaySettings.MaximumWordLength && x.Length <= dataContainer.GetElementContainer.Element.Length))
-                 .GroupBy(x => x)
-                 .Select(x => x.Key.ToLower())
-                 .OrderBy(x => x)
-                 .Distinct(StringComparer.CurrentCultureIgnoreCase)));
-        }
+        */
     }
 }

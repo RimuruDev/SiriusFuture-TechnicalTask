@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0574abb293a5a451c8cbb84abc80390c, type: 3}
   m_Name: GameplaySettings
   m_EditorClassIdentifier: 
-  maximumWordLength: 13
+  maximumWordLength: 4
   numberOfAttempts: 10

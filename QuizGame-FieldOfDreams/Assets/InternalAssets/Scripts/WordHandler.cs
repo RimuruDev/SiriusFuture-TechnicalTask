@@ -31,7 +31,7 @@ namespace RimuruDev.SiriusFuture
             if (uiHandler == null)
                 uiHandler = FindObjectOfType<UIHandler>();
         }
-
+           
         private void OnEnable() => OnFilteringAndSetTextDataset += FilteringAndSetTextDataset;
 
         private void OnDisable() => OnFilteringAndSetTextDataset -= FilteringAndSetTextDataset;
