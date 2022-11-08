@@ -2,25 +2,31 @@ using UnityEngine;
 
 namespace RimuruDev.SiriusFuture
 {
+    [DisallowMultipleComponent]
+    [HelpURL("https://t.me/AbyssMothGames")]
     public sealed class InitializationGame : MonoBehaviour
     {
+        [Header("Gameplay Settings")]
+        [SerializeField] private GameplaySettings gameplaySettings;
+
         [Header("Simple DI :D")]
         [SerializeField] private GameObject[] container;
 
+        private void Awake() => FindObjectOfType<GameDataContainer>().GameplaySettings = gameplaySettings;
+
         private void Start() => Init();
 
-#if !DEBUG
+        [System.Diagnostics.Conditional("DEBUG")]
         private void OnValidate()
         {
             for (int i = 0; i < container.Length; i++)
             {
                 if (container[i].GetComponent<IInitSystem>() == null)
                     container[i] = null;
-                else
-                    Debug.LogWarning("You are trying to inject an object that has not signed a contract with IInitSystem.");
+                //else
+                // Debug.LogWarning("You are trying to inject an object that has not signed a contract with IInitSystem.");
             }
         }
-#endif
 
         private void Init()
         {

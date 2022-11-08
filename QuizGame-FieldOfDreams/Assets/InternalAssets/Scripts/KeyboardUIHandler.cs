@@ -8,14 +8,13 @@ using UnityEngine.UI;
 
 namespace RimuruDev.SiriusFuture
 {
+    [DisallowMultipleComponent]
+    [HelpURL("https://t.me/AbyssMothGames")]
     public sealed class KeyboardUIHandler : MonoBehaviour, IInitSystem
     {
         public Action OnFillingKeyboardUI;
         public Action OnNormalizationButtons;
         public Action OnRemoveCurrentWordWithArrayList;
-        public Action OnSaveScore;
-        public Action OnLoadScore;
-
         public Action OnCheckingProgress;
         public Action OnNextSestion;
 
@@ -23,10 +22,12 @@ namespace RimuruDev.SiriusFuture
         private WordElementSwitcher wordElementSwitcher;
         private WordHandler wordHandler;
 
-        private TextDataFilteringHandler textDataset = new TextDataFilteringHandler();
+        private readonly SaveUserProgress saveUserProgress = new SaveUserProgress();
+        private readonly LoadUserProgress loadUserProgress = new LoadUserProgress();
+        // private TextDataFilteringHandler textDataset;
+
         private readonly string path = @$"{Application.streamingAssetsPath}/OriginalTextOfAlicesBook.txt";
         private readonly string pathOut = @$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt";
-        private readonly int maximumWordLength = 4; // 13 maximum length
 
         private int wordHit = 0;
 
@@ -40,6 +41,8 @@ namespace RimuruDev.SiriusFuture
 
             if (wordElementSwitcher == null)
                 wordElementSwitcher = FindObjectOfType<WordElementSwitcher>();
+
+            //textDataset = new TextDataFilteringHandler(dataContainer);
         }
 
         public void Init()
@@ -53,8 +56,8 @@ namespace RimuruDev.SiriusFuture
             OnFillingKeyboardUI += FillingKeyboardUI;
             OnNormalizationButtons += NormalizationButtons;
             OnRemoveCurrentWordWithArrayList += RemoveCurrentWordWithArrayList;
-            OnSaveScore += SaveCurrentScore;
-            OnLoadScore += LoadCurrentScore;
+            saveUserProgress.OnEnabled();
+            loadUserProgress.OnEnabled();
             OnCheckingProgress += CheckingProgress;
             OnNextSestion += NextSession;
         }
@@ -64,8 +67,8 @@ namespace RimuruDev.SiriusFuture
             OnFillingKeyboardUI -= FillingKeyboardUI;
             OnNormalizationButtons -= NormalizationButtons;
             OnRemoveCurrentWordWithArrayList -= RemoveCurrentWordWithArrayList;
-            OnSaveScore -= SaveCurrentScore;
-            OnLoadScore -= LoadCurrentScore;
+            saveUserProgress.OnDisabled();
+            loadUserProgress.OnDisabled();
             OnCheckingProgress -= CheckingProgress;
             OnNextSestion -= NextSession;
         }
@@ -122,8 +125,6 @@ namespace RimuruDev.SiriusFuture
             int middleKeywordLength = dataContainer.GetUserInterfaceData.MiddleUserInterfaceKeyboard.Length;
             int bottomKeywordLength = dataContainer.GetUserInterfaceData.BottomUserInterfaceKeyboard.Length;
 
-            Debug.Log("headerKeywordLength = " + headerKeywordLength);
-            Debug.Log("dataContainer.GetUserInterfaceData.HeaderUserInterfaceKeyboard[0].name = " + dataContainer.GetUserInterfaceData.HeaderUserInterfaceKeyboard[0].name);
             for (int i = 0; i < headerKeywordLength; i++)
             {
                 dataContainer.KeyboardButtons[i] = dataContainer.GetUserInterfaceData.HeaderUserInterfaceKeyboard[i]
@@ -188,9 +189,11 @@ namespace RimuruDev.SiriusFuture
                 if (word == currentWord[i].ToString().ToUpper())
                 {
                     dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject.SetActive(true);
-                    dataContainer.GetHeaderValue.NumberOfScores++;
+
+                    // TODO: Mode in scriptable object. gameObject.SetActive(false) and gameObject.interactable = false;
                     button.interactable = false;
-                    OnCheckingProgress?.Invoke();
+                    //OnCheckingProgress?.Invoke();
+                    CheckingProgress();
                 }
             }
         }
@@ -202,8 +205,9 @@ namespace RimuruDev.SiriusFuture
             if (wordHandler.GetWordLenthNormolized == wordHit)
             {
                 wordHit = 0;
-                dataContainer.GetHeaderValue.NumberOfScores += dataContainer.GetHeaderValue.NumberOfAttempts;
-                OnNextSestion?.Invoke();
+                dataContainer.GetHeaderValue.NumberOfPoints += dataContainer.GetHeaderValue.NumberOfAttempts;
+                // OnNextSestion?.Invoke();
+                NextSession();
             }
         }
 
@@ -216,25 +220,35 @@ namespace RimuruDev.SiriusFuture
             butoon.transform.GetChild(0).gameObject.SetActive(false);
 
             if (dataContainer.GetHeaderValue.NumberOfAttempts == 0)
+            {
+                saveUserProgress.OnSaveScore(0);
                 UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+            }
         }
 
         private void NextSession()
         {
-            OnRemoveCurrentWordWithArrayList?.Invoke();
-            OnSaveScore?.Invoke();
+            //OnRemoveCurrentWordWithArrayList?.Invoke();
+            RemoveCurrentWordWithArrayList();
+            wordHandler.OnFilteringAndSetTextDataset();
+            saveUserProgress.OnSaveScore(dataContainer.GetHeaderValue.NumberOfPoints);
             OnNormalizationButtons?.Invoke();
             wordHandler.OnFilteringAndSetTextDataset?.Invoke();
+
             wordElementSwitcher.OnCloseAllWordTextElement?.Invoke();
             wordElementSwitcher.OnEnableAnswerWordTextElement?.Invoke();
             wordElementSwitcher.OnHideAllEmptyWordUIElement?.Invoke();
+
+            dataContainer.GetHeaderValue.NumberOfAttempts = dataContainer.GameplaySettings.NumberOfAttempts;
         }
 
         private void RemoveCurrentWordWithArrayList()
         {
             string word = wordHandler.GetCurrenWord;
+            Debug.Log(word);
+            Debug.Log(wordHandler.GetWordArray.Length);
 
-            var arrayCopy = textDataset.Remove_(wordHandler.GetWordArray, word);
+            var arrayCopy = dataContainer.GetTextDataset.RemoveCurrentWordFromArray(ref wordHandler.wordArray, word);
 
             string controlCharacter = "\r\n";
             string pattern = @"\b[a-z]+\b";
@@ -243,23 +257,11 @@ namespace RimuruDev.SiriusFuture
 
             File.WriteAllText(pathOut, string.Join(controlCharacter, Regex.Matches(resultStr, pattern, RegexOptions.IgnoreCase)
                  .Select(x => x.Value)
-                 .Where(x => x.Length > 4)
+                 .Where(x => (x.Length >= dataContainer.GameplaySettings.MaximumWordLength && x.Length <= dataContainer.GetElementContainer.Element.Length))
                  .GroupBy(x => x)
                  .Select(x => x.Key.ToLower())
                  .OrderBy(x => x)
                  .Distinct(StringComparer.CurrentCultureIgnoreCase)));
-        }
-
-        private void SaveCurrentScore() => PlayerPrefs.SetInt("Score", dataContainer.GetHeaderValue.NumberOfScores);
-
-        private void LoadCurrentScore()
-        {
-            dataContainer.GetHeaderValue.NumberOfAttempts = dataContainer.numattempt;
-
-            if (PlayerPrefs.GetInt("Score") == 0)
-                dataContainer.GetHeaderValue.NumberOfScores = dataContainer.numScore;
-            else
-                dataContainer.GetHeaderValue.NumberOfScores = PlayerPrefs.GetInt("Score");
         }
     }
 }

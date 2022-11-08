@@ -9,52 +9,57 @@ using UnityEngine.UI;
 
 namespace RimuruDev.SiriusFuture
 {
+    [DisallowMultipleComponent]
+    [HelpURL("https://t.me/AbyssMothGames")]
     public sealed class GameDataContainer : MonoBehaviour
     {
-        [Header("[===== Word to unravel =====]"), Space(5)]
+        private GameplaySettings gameplaySettings;
+        public GameplaySettings GameplaySettings { get => gameplaySettings; set => gameplaySettings = value; }
+
         [SerializeField] private ElementContainer elementContainer;
         public ElementContainer GetElementContainer => elementContainer;
 
-        [Header("[===== User interface data =====]"), Space(5)]
         [SerializeField] private UserInterfaceData userInterfaceData;
         public UserInterfaceData GetUserInterfaceData => userInterfaceData;
-        public KeywordWords keywordWords = new KeywordWords();
+        [HideInInspector] public KeywordWords keywordWords = new KeywordWords();
         public KeywordWords GetKeywordWords => keywordWords;
 
-        [Header("[===== Header text =====]"), Space(5)]
         [SerializeField] private HeaderText headerText;
         public HeaderText GetHeaderText => headerText;
 
-        [Header("[===== Scores text =====]"), Space(5)]
-        [SerializeField] private HeaderValue headerValue = new HeaderValue();
-        public HeaderValue GetHeaderValue => headerValue;
+        [SerializeField] private GameObject winPopup;
+        public GameObject WinPopup { get => winPopup; private set => winPopup = value; }
 
-        [Header(" ")]
-        [SerializeField] private Button[] keyboardButtons = new Button[26];
+        [SerializeField] private GameObject warningPopup;
+        public GameObject WarningPopup { get => warningPopup; private set => warningPopup = value; }
+
+        [SerializeField, HideInInspector] private Button[] keyboardButtons = new Button[26];
         public Button[] KeyboardButtons => keyboardButtons;
 
-        public int numattempt = 10;
-        public int numScore = 0;
+        private HeaderValue headerValue;
+        public HeaderValue GetHeaderValue => headerValue;
+
+        private WordHandler wordHandler;
+        public WordHandler WordHandler { get => wordHandler; set => wordHandler = value; }
+
+        private TextDataFilteringHandler textDataset;
+        public TextDataFilteringHandler GetTextDataset => textDataset;
+
+        private void Awake()
+        {
+            textDataset = new TextDataFilteringHandler(this);
+            headerValue = new HeaderValue(FindObjectOfType<UIHandler>());
+
+            if (wordHandler == null)
+                wordHandler = FindObjectOfType<WordHandler>();
+        }
     }
 
     [Serializable]
     public sealed class ElementContainer
     {
-        private const int maximumWordLength = 13;
-
         [SerializeField] private Transform[] element;
-
         public Transform[] Element { get => element; set => element = value; }
-        /* {
-             get => element;
-             set
-             {
-                 if (element.Length < maximumWordLength)
-                     element = value;
-                 else
-                     Debug.Log("Element is full!");
-             }
-         }*/
     }
 
     [Serializable]
@@ -86,9 +91,9 @@ namespace RimuruDev.SiriusFuture
     public sealed class HeaderText
     {
         [SerializeField] private TMP_Text currentAttemptsText;
-        [SerializeField] private TMP_Text currentScoreText;
-
         public TMP_Text CurrentAttemptsText { get => currentAttemptsText; set => currentAttemptsText = value; }
+
+        [SerializeField] private TMP_Text currentScoreText;
         public TMP_Text CurrentScoreText { get => currentScoreText; set => currentScoreText = value; }
     }
 
@@ -98,7 +103,7 @@ namespace RimuruDev.SiriusFuture
         [SerializeField] private UIHandler uiHandler;
 
         [SerializeField] private int numberOfAttempts;
-        [SerializeField] private int numberOfScores;
+        [SerializeField] private int numberOfPoints;
 
         public int NumberOfAttempts
         {
@@ -110,17 +115,17 @@ namespace RimuruDev.SiriusFuture
             }
         }
 
-        public int NumberOfScores
+        public int NumberOfPoints
         {
-            get => numberOfScores;
+            get => numberOfPoints;
             set
             {
-                numberOfScores = Mathf.Clamp(value, 0, ushort.MaxValue);
+                numberOfPoints = Mathf.Clamp(value, 0, ushort.MaxValue);
                 uiHandler.OnUpdateScoreText?.Invoke();
             }
         }
 
-        public HeaderValue() { }
+        //public HeaderValue() { }
 
         public HeaderValue(UIHandler uiHandler) => this.uiHandler = uiHandler;
     }

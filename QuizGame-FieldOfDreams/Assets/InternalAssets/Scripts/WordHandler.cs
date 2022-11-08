@@ -1,13 +1,16 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RimuruDev.SiriusFuture
 {
+    [DisallowMultipleComponent]
+    [HelpURL("https://t.me/AbyssMothGames")]
     public sealed class WordHandler : MonoBehaviour, IInitSystem
     {
         public Action OnFilteringAndSetTextDataset;
 
-        [SerializeField, Space] private string[] wordArray;
+        [SerializeField, Space] public string[] wordArray; // Temp opened acccessor
         public string[] GetWordArray => wordArray;
         [SerializeField, Space] private string currentWord;
         [SerializeField, Space] private char[] currentWordChar;
@@ -16,8 +19,18 @@ namespace RimuruDev.SiriusFuture
         public string GetCurrenWord => currentWord;
         public char[] GetCurrentWordChar => currentWordChar;
 
-        private TextDataFilteringHandler textDataset = new TextDataFilteringHandler();
+        private GameDataContainer dataContainer;
+        private UIHandler uiHandler;
         private bool isFilteringByUniqueWords = false;
+
+        private void Awake()
+        {
+            if (dataContainer == null)
+                dataContainer = FindObjectOfType<GameDataContainer>();
+
+            if (uiHandler == null)
+                uiHandler = FindObjectOfType<UIHandler>();
+        }
 
         private void OnEnable() => OnFilteringAndSetTextDataset += FilteringAndSetTextDataset;
 
@@ -29,21 +42,27 @@ namespace RimuruDev.SiriusFuture
         {
             if (!isFilteringByUniqueWords)
             {
-                textDataset.FilteringByUniqueWords();
+                //  textDataset.FilteringByUniqueWords();
+                dataContainer.GetTextDataset.FilteringByUniqueWords();
                 FillindWordArray();
             }
             else
                 FillindWordArray();
 
             SetCurrentWord();
+
+            isFilteringByUniqueWords = true;
         }
 
         private void FillindWordArray()
         {
-            var dataset = textDataset.GetFilteringByUniqueWords();
+            var dataset = dataContainer.GetTextDataset.GetFilteringByUniqueWords();
 
-            if (dataset.Length < 0)
-                Debug.Log("Win Game! Заглушка!");
+            if (dataset.Length <= 0 && !isFilteringByUniqueWords)
+                uiHandler.OnWarningPopup?.Invoke();
+
+            if (dataset.Length <= 0 && isFilteringByUniqueWords)
+                uiHandler.OnWinPopup?.Invoke();
 
             wordArray = dataset.Split(new char[] { '\n' });
         }

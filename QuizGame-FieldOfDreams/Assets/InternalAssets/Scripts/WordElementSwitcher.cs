@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 namespace RimuruDev.SiriusFuture
 {
+    [DisallowMultipleComponent]
+    [HelpURL("https://t.me/AbyssMothGames")]
     public sealed class WordElementSwitcher : MonoBehaviour, IInitSystem
     {
         public Action OnCloseAllWordTextElement;
@@ -45,6 +47,8 @@ namespace RimuruDev.SiriusFuture
 
         private void CloseAllWordTextElement()
         {
+            if (wordHandler.GetWordLenthNormolized <= 0) return; // Generate warning popup
+
             int elementLength = dataContainer.GetElementContainer.Element.Length;
 
             for (int i = 0; i < elementLength; i++)
@@ -53,6 +57,8 @@ namespace RimuruDev.SiriusFuture
 
         private void HideAllEmptyWordUIElement()
         {
+            if (wordHandler.GetWordLenthNormolized <= 0) return; // Generate warning popup
+
             int elementLength = dataContainer.GetElementContainer.Element.Length;
 
             for (int i = wordHandler.GetWordLenthNormolized; i < elementLength; i++)
@@ -64,6 +70,8 @@ namespace RimuruDev.SiriusFuture
 
         private void EnableAnswerWordTextElement()
         {
+            if (wordHandler.GetWordLenthNormolized <= 0) return; // Generate warning popup
+
             for (int i = 0; i < wordHandler.GetWordLenthNormolized; i++)
             {
                 dataContainer.GetElementContainer.Element[i].GetComponent<Image>().color = new Color(0, 0, 0, 255);
