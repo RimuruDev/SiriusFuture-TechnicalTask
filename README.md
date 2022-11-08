@@ -1,8 +1,3 @@
-# SiriusFuture-TechnicalTask
- 
-https://github.com/RimuruDev/SiriusFuture-TechnicalTask/blob/main/GitResources/Failure.gif
-
-
 # :pushpin:Sample
 <p align="center">
   <a>
