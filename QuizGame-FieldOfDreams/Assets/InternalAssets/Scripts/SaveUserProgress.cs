@@ -12,6 +12,6 @@ namespace RimuruDev.SiriusFuture
 
         public void OnDisabled() => OnSaveScore -= SaveScore;
 
-        private void SaveScore(int score) => UnityEngine.PlayerPrefs.SetInt("Score", score);
+        private void SaveScore(int score) => UnityEngine.PlayerPrefs.SetInt(Tag.Score, score);
     }
 }

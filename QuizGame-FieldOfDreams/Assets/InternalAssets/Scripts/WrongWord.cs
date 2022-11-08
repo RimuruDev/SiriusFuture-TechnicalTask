@@ -1,5 +1,4 @@
 ﻿using System;
-
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,7 +19,7 @@ namespace RimuruDev.SiriusFuture
         public void OnEnable() => OnClickWrongWord += ClickWrongWord;
         public void OnDisable() => OnClickWrongWord -= ClickWrongWord;
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [System.Diagnostics.Conditional(Tag.DEBUG)]
         private void OnValidate() => CheckRefs();
 
         private void CheckRefs()

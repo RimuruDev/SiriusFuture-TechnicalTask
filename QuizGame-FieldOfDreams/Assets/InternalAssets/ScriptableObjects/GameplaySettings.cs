@@ -23,7 +23,7 @@ namespace RimuruDev.SiriusFuture
             NumberOfAttempts = 10;
         }
 
-        [Conditional("DEBUG")]
+        [Conditional(Tag.DEBUG)]
         private void OnValidate()
         {
             if (MaximumWordLength > 13)

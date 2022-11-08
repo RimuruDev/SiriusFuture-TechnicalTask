@@ -12,9 +12,10 @@ namespace RimuruDev.SiriusFuture
         public void LoadDefaultProjectSettings()
         {
             var dataContainer = FindObjectOfType<GameDataContainer>();
-            dataContainer.GameplaySettings.MaximumWordLength = 4;
-            dataContainer.GameplaySettings.NumberOfAttempts = 10;
-            //GameObject.FindGameObjectWithTag("WorningPopup").SetActive(false);
+            {
+                dataContainer.GameplaySettings.MaximumWordLength = 4;
+                dataContainer.GameplaySettings.NumberOfAttempts = 10;
+            }
             RestartGamplayScene();
         }
     }

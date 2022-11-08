@@ -16,7 +16,7 @@ namespace RimuruDev.SiriusFuture
 
         private void Start() => Init();
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [System.Diagnostics.Conditional(Tag.DEBUG)]
         private void OnValidate()
         {
             for (int i = 0; i < container.Length; i++)

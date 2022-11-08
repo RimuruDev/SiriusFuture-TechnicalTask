@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-
 using UnityEngine;
 
 namespace RimuruDev.SiriusFuture
@@ -12,29 +11,20 @@ namespace RimuruDev.SiriusFuture
     {
         public Action OnRemoveCurrentWordHandler;
 
+        [SerializeField, HideInInspector] private WordHandler wordHandler;
+        [SerializeField, HideInInspector] private GameDataContainer dataContainer;
+
         private readonly string path = @$"{Application.streamingAssetsPath}/OriginalTextOfAlicesBook.txt";
         private readonly string pathOut = @$"{Application.streamingAssetsPath}/SortedTextOfAlicesBook.txt";
-
-      [SerializeField, HideInInspector]  private WordHandler wordHandler;
-      [SerializeField, HideInInspector]  private GameDataContainer dataContainer;
 
         private void Awake() => CheckRefs();
 
         private void OnEnable() => OnRemoveCurrentWordHandler += RemoveCurrentWordWithArrayList;
         private void OnDisable() => OnRemoveCurrentWordHandler -= RemoveCurrentWordWithArrayList;
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [System.Diagnostics.Conditional(Tag.DEBUG)]
         private void OnValidate() => CheckRefs();
-
-        private void CheckRefs()
-        {
-            if (dataContainer == null)
-                dataContainer = FindObjectOfType<GameDataContainer>();
-
-            if (wordHandler == null)
-                wordHandler = FindObjectOfType<WordHandler>();
-        }
-
+        
         private void RemoveCurrentWordWithArrayList()
         {
             string word = wordHandler.GetCurrenWord;
@@ -53,6 +43,15 @@ namespace RimuruDev.SiriusFuture
                  .Select(x => x.Key.ToLower())
                  .OrderBy(x => x)
                  .Distinct(StringComparer.CurrentCultureIgnoreCase)));
+        }
+
+        private void CheckRefs()
+        {
+            if (dataContainer == null)
+                dataContainer = FindObjectOfType<GameDataContainer>();
+
+            if (wordHandler == null)
+                wordHandler = FindObjectOfType<WordHandler>();
         }
     }
 }

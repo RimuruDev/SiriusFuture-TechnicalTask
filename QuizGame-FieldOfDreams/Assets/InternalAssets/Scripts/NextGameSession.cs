@@ -1,5 +1,4 @@
 ﻿using System;
-
 using UnityEngine;
 
 namespace RimuruDev.SiriusFuture
@@ -23,7 +22,7 @@ namespace RimuruDev.SiriusFuture
 
         private void Awake() => CheckRefs();
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [System.Diagnostics.Conditional(Tag.DEBUG)]
         private void OnValidate() => CheckRefs();
 
         private void OnEnable() => OnNextSession += NextSession;
@@ -61,7 +60,7 @@ namespace RimuruDev.SiriusFuture
             if (keyboardUIHandler == null)
                 keyboardUIHandler = FindObjectOfType<KeyboardUIHandler>();
 
-            if (keyboardUIHandler == null)
+            if (removeCurrentWordHandler == null)
                 removeCurrentWordHandler = FindObjectOfType<RemoveCurrentWordHandler>();
 
             if (buttonhandler == null)

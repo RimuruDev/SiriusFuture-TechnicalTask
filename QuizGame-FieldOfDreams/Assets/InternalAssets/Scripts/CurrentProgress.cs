@@ -1,5 +1,4 @@
 ﻿using System;
-
 using UnityEngine;
 
 namespace RimuruDev.SiriusFuture
@@ -19,20 +18,8 @@ namespace RimuruDev.SiriusFuture
         private void OnEnable() => OnCheckingProgress += CheckingProgress;
         private void OnDisable() => OnCheckingProgress -= CheckingProgress;
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [System.Diagnostics.Conditional(Tag.DEBUG)]
         private void OnValidate() => CheckRefs();
-
-        private void CheckRefs()
-        {
-            if (dataContainer == null)
-                dataContainer = FindObjectOfType<GameDataContainer>();
-
-            if (wordHandler == null)
-                wordHandler = FindObjectOfType<WordHandler>();
-
-            if (nextGameSession == null)
-                nextGameSession = FindObjectOfType<NextGameSession>();
-        }
 
         private void CheckingProgress()
         {
@@ -44,6 +31,18 @@ namespace RimuruDev.SiriusFuture
                 dataContainer.GetHeaderValue.NumberOfPoints += dataContainer.GetHeaderValue.NumberOfAttempts;
                 nextGameSession.OnNextSession?.Invoke();
             }
+        }
+
+        private void CheckRefs()
+        {
+            if (dataContainer == null)
+                dataContainer = FindObjectOfType<GameDataContainer>();
+
+            if (wordHandler == null)
+                wordHandler = FindObjectOfType<WordHandler>();
+
+            if (nextGameSession == null)
+                nextGameSession = FindObjectOfType<NextGameSession>();
         }
     }
 }

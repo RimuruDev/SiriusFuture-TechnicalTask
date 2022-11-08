@@ -12,17 +12,11 @@ namespace RimuruDev.SiriusFuture
         public Action OnHideAllEmptyWordUIElement;
         public Action OnEnableAnswerWordTextElement;
 
-        private GameDataContainer dataContainer;
-        private WordHandler wordHandler;
+        [SerializeField, HideInInspector] private GameDataContainer dataContainer;
+        [SerializeField, HideInInspector] private WordHandler wordHandler;
+        [SerializeField, HideInInspector] private UIHandler uiHandler;
 
-        private void Awake()
-        {
-            if (dataContainer == null)
-                dataContainer = FindObjectOfType<GameDataContainer>();
-
-            if (wordHandler == null)
-                wordHandler = FindObjectOfType<WordHandler>();
-        }
+        private void Awake() => CheckRefs();
 
         private void OnEnable()
         {
@@ -38,6 +32,9 @@ namespace RimuruDev.SiriusFuture
             OnEnableAnswerWordTextElement -= EnableAnswerWordTextElement;
         }
 
+        [System.Diagnostics.Conditional(Tag.DEBUG)]
+        private void OnValidate() => CheckRefs();
+
         public void Init()
         {
             CloseAllWordTextElement();
@@ -47,7 +44,7 @@ namespace RimuruDev.SiriusFuture
 
         private void CloseAllWordTextElement()
         {
-            if (wordHandler.GetWordLenthNormolized <= 0) return; // Generate warning popup
+            if (wordHandler.GetWordLenthNormolized <= 0) return;//{ uiHandler.OnWarningPopup(true); return; }
 
             int elementLength = dataContainer.GetElementContainer.Element.Length;
 
@@ -57,7 +54,7 @@ namespace RimuruDev.SiriusFuture
 
         private void HideAllEmptyWordUIElement()
         {
-            if (wordHandler.GetWordLenthNormolized <= 0) return; // Generate warning popup
+            if (wordHandler.GetWordLenthNormolized <= 0) return;//{ uiHandler.OnWarningPopup(true); return; }
 
             int elementLength = dataContainer.GetElementContainer.Element.Length;
 
@@ -70,7 +67,7 @@ namespace RimuruDev.SiriusFuture
 
         private void EnableAnswerWordTextElement()
         {
-            if (wordHandler.GetWordLenthNormolized <= 0) return; // Generate warning popup
+            if (wordHandler.GetWordLenthNormolized <= 0) return;//{ uiHandler.OnWarningPopup(true); return; }
 
             for (int i = 0; i < wordHandler.GetWordLenthNormolized; i++)
             {
@@ -79,6 +76,18 @@ namespace RimuruDev.SiriusFuture
                 dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject
                     .GetComponent<TMPro.TMP_Text>().text = wordHandler.GetCurrentWordChar[i].ToString().ToUpper();
             }
+        }
+
+        private void CheckRefs()
+        {
+            if (dataContainer == null)
+                dataContainer = FindObjectOfType<GameDataContainer>();
+
+            if (wordHandler == null)
+                wordHandler = FindObjectOfType<WordHandler>();
+
+            if (uiHandler == null)
+                uiHandler = FindObjectOfType<UIHandler>();
         }
     }
 }

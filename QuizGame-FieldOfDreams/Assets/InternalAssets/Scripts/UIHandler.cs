@@ -9,17 +9,13 @@ namespace RimuruDev.SiriusFuture
     {
         public Action OnUpdateScoreText;
         public Action OnAttemptsText;
-        public Action OnWinPopup;
-        public Action OnWarningPopup;
+        public Action<bool> OnWinPopup;
+        public Action<bool> OnWarningPopup;
 
-        private GameDataContainer dataContainer;
-        private LoadUserProgress loadUserProgress = new LoadUserProgress();
+        [SerializeField, HideInInspector] private GameDataContainer dataContainer;
+        [SerializeField, HideInInspector] private LoadUserProgress loadUserProgress = new LoadUserProgress();
 
-        private void Awake()
-        {
-            if (dataContainer == null)
-                dataContainer = FindObjectOfType<GameDataContainer>();
-        }
+        private void Awake() => CheckRefs();
 
         private void OnEnable()
         {
@@ -39,15 +35,25 @@ namespace RimuruDev.SiriusFuture
             OnWarningPopup -= ShowWarningPopup;
         }
 
+        [System.Diagnostics.Conditional(Tag.DEBUG)]
+        private void OnValidate() => CheckRefs();
+
         public void UpdateNumberOfPointsText() =>
             dataContainer.GetHeaderText.CurrentScoreText.text = $"Number of points: {dataContainer.GetHeaderValue.NumberOfPoints}";
 
         private void UpdateAttemptsText() =>
             dataContainer.GetHeaderText.CurrentAttemptsText.text = $"Number of attempts: {dataContainer.GetHeaderValue.NumberOfAttempts}";
 
-        private void ShowWinPopup() => dataContainer.WinPopup.SetActive(true);
-        private void ShowWarningPopup() => dataContainer.WarningPopup.SetActive(true);
+        private void ShowWinPopup(bool isActive) => dataContainer.WinPopup.SetActive(isActive);
+
+        private void ShowWarningPopup(bool isActive) => dataContainer.WarningPopup.SetActive(true);
 
         public void Init() => loadUserProgress.OnLoadScore(dataContainer);
+
+        private void CheckRefs()
+        {
+            if (dataContainer == null)
+                dataContainer = FindObjectOfType<GameDataContainer>();
+        }
     }
 }

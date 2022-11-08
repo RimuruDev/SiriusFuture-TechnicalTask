@@ -1,5 +1,4 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RimuruDev.SiriusFuture
@@ -15,26 +14,22 @@ namespace RimuruDev.SiriusFuture
         [SerializeField, Space] private string currentWord;
         [SerializeField, Space] private char[] currentWordChar;
 
+        [SerializeField, HideInInspector] private GameDataContainer dataContainer;
+        [SerializeField, HideInInspector] private UIHandler uiHandler;
+
         public int GetWordLenthNormolized => currentWordChar.Length - 1;
         public string GetCurrenWord => currentWord;
         public char[] GetCurrentWordChar => currentWordChar;
 
-        private GameDataContainer dataContainer;
-        private UIHandler uiHandler;
         private bool isFilteringByUniqueWords = false;
 
-        private void Awake()
-        {
-            if (dataContainer == null)
-                dataContainer = FindObjectOfType<GameDataContainer>();
+        private void Awake() => CheckRefs();
 
-            if (uiHandler == null)
-                uiHandler = FindObjectOfType<UIHandler>();
-        }
-           
         private void OnEnable() => OnFilteringAndSetTextDataset += FilteringAndSetTextDataset;
 
         private void OnDisable() => OnFilteringAndSetTextDataset -= FilteringAndSetTextDataset;
+
+        private void OnValidate() => CheckRefs();
 
         public void Init() => FilteringAndSetTextDataset();
 
@@ -42,7 +37,6 @@ namespace RimuruDev.SiriusFuture
         {
             if (!isFilteringByUniqueWords)
             {
-                //  textDataset.FilteringByUniqueWords();
                 dataContainer.GetTextDataset.FilteringByUniqueWords();
                 FillindWordArray();
             }
@@ -58,11 +52,19 @@ namespace RimuruDev.SiriusFuture
         {
             var dataset = dataContainer.GetTextDataset.GetFilteringByUniqueWords();
 
-            if (dataset.Length <= 0 && !isFilteringByUniqueWords)
-                uiHandler.OnWarningPopup?.Invoke();
+            if (dataset.Length <= 0 && isFilteringByUniqueWords == false)
+            {
+                Debug.Log($"Warning: [{isFilteringByUniqueWords} == false]");
+                uiHandler.OnWarningPopup(true);
+                //uiHandler.OnWinPopup(false);
+            }
 
-            if (dataset.Length <= 0 && isFilteringByUniqueWords)
-                uiHandler.OnWinPopup?.Invoke();
+            if (dataset.Length <= 0 && isFilteringByUniqueWords == true)
+            {
+                Debug.Log($"Win: [{isFilteringByUniqueWords} == true]");
+                uiHandler.OnWinPopup(true);
+                // uiHandler.OnWarningPopup(false);
+            }
 
             wordArray = dataset.Split(new char[] { '\n' });
         }
@@ -74,5 +76,14 @@ namespace RimuruDev.SiriusFuture
         }
 
         private int GetRandomArrayElementIndex() => new System.Random().Next(0, wordArray.Length);
+
+        private void CheckRefs()
+        {
+            if (dataContainer == null)
+                dataContainer = FindObjectOfType<GameDataContainer>();
+
+            if (uiHandler == null)
+                uiHandler = FindObjectOfType<UIHandler>();
+        }
     }
 }

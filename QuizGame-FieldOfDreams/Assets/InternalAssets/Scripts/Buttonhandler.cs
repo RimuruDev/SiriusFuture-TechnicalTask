@@ -1,5 +1,4 @@
 ﻿using System;
-
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,7 +24,7 @@ namespace RimuruDev.SiriusFuture
 
         private void OnEnable() => OnCacheAndSubscribeAllKeyboardButtons += CacheAllKeyboardButtons;
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [System.Diagnostics.Conditional(Tag.DEBUG)]
         public void OnDisable()
         {
             OnCacheAndSubscribeAllKeyboardButtons -= CacheAllKeyboardButtons;
@@ -96,10 +95,8 @@ namespace RimuruDev.SiriusFuture
             }
 
             if (isAnswerWord)
-                //   OpenAnswerWords(currenAnswerWord, butoon);
                 answerWord.OnClickAnswerWords(currenAnswerWord, butoon);
             else
-                //DisableButton(butoon);
                 wrongWord.OnClickWrongWord(butoon);
         }
 

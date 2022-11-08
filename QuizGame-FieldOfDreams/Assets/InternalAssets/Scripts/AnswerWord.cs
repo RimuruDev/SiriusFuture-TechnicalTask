@@ -1,5 +1,4 @@
 ﻿using System;
-
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,8 +18,26 @@ namespace RimuruDev.SiriusFuture
         private void OnEnable() => OnClickAnswerWords += ClickAnswerWords;
         private void OnDisable() => OnClickAnswerWords += ClickAnswerWords;
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [System.Diagnostics.Conditional(Tag.DEBUG)]
         private void OnValidate() => CheckRefs();
+
+        private void ClickAnswerWords(string currentAnswerWord, Button button)
+        {
+            var currentWord = wordHandler.GetCurrentWordChar;
+
+            for (int i = 0; i < currentWord.Length - 1; i++)
+            {
+                if (currentAnswerWord == currentWord[i].ToString().ToUpper())
+                {
+                    dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject.SetActive(true);
+                    {
+                        button.GetComponent<Image>().color = new Color(74, 70, 69, 0);
+                        button.transform.GetChild(0).gameObject.SetActive(false);
+                    }
+                    currentProgress.OnCheckingProgress.Invoke();
+                }
+            }
+        }
 
         private void CheckRefs()
         {
@@ -32,24 +49,6 @@ namespace RimuruDev.SiriusFuture
 
             if (currentProgress == null)
                 currentProgress = FindObjectOfType<CurrentProgress>();
-        }
-
-        private void ClickAnswerWords(string currentAnswerWord, Button button)
-        {
-            var currentWord = wordHandler.GetCurrentWordChar;
-
-            for (int i = 0; i < currentWord.Length - 1; i++)
-            {
-                if (currentAnswerWord == currentWord[i].ToString().ToUpper())
-                {
-                    dataContainer.GetElementContainer.Element[i].GetChild(0).gameObject.SetActive(true);
-
-                    button.GetComponent<Image>().color = new Color(74, 70, 69, 0);
-                    button.transform.GetChild(0).gameObject.SetActive(false);
-
-                    currentProgress.OnCheckingProgress.Invoke();
-                }
-            }
         }
     }
 }
